@@ -1,0 +1,32 @@
+[package]
+name = "cgo-pprof-rs"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "goodboy"
+path = "src/lib.rs"
+crate-type = ["staticlib"]
+
+[dependencies]
+libc = "0.2.170"
+tokio = { version = "1", features = ["full"] }
+once_cell = "1.21.3"
+mem-ring = { version = "0.2.0", default-features = false, features = ["tokio"] }
+slab = "0.4"
+hyper = { version = "0.14", features = ["full"] }
+lazy_static = "1.3"
+pprof = { version = "0.14", default-features = false, features = [
+  "flamegraph",
+  "protobuf-codec",
+] }
+regex = "1.3"
+futures = { version = "0.3", features = ["thread-pool", "compat"] }
+futures-executor = "0.3.1"
+futures-timer = "3.0"
+futures-util = { version = "0.3.1", default-features = false, features = [
+  "io",
+  "async-await",
+] }
+mime = "0.3.13"
+url = "2"
