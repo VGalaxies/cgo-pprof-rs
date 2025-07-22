@@ -293,3 +293,15 @@ fn spawn_http_server() {
         });
     });
 }
+
+#[no_mangle]
+pub extern "C" fn get_sigprof_handler(ptr: *mut u64) -> i32 {
+    unsafe {
+        let mut old: libc::sigaction = std::mem::zeroed();
+        if libc::sigaction(libc::SIGPROF, std::ptr::null(), &mut old) != 0 {
+            return -1;
+        }
+        *ptr = old.sa_sigaction as u64;
+        0
+    }
+}

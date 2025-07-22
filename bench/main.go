@@ -2,7 +2,9 @@ package main
 
 //#cgo LDFLAGS: -L${SRCDIR}/../../target/release -lgoodboy
 /*
+#include <stdint.h>
 extern void init_tokio_runtime();
+extern int get_sigprof_handler(uint64_t* ptr);
 */
 import "C"
 import (
@@ -54,5 +56,17 @@ func main() {
 	// defer trace.Stop()
 
 	C.init_tokio_runtime()
-	time.Sleep(100 * time.Second)
+	for {
+		time.Sleep(1 * time.Second)
+		printSigprofHandler("pprof-rs")
+	}
+}
+
+func printSigprofHandler(prefix string) {
+	var ptr C.uint64_t
+	if C.get_sigprof_handler(&ptr) != 0 {
+		fmt.Printf("%s: get_sigprof_handler failed\n", prefix)
+	} else {
+		fmt.Printf("%s SIGPROF handler = 0x%x\n", prefix, ptr)
+	}
 }

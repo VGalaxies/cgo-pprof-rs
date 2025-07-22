@@ -16,10 +16,7 @@ mem-ring = { version = "0.2.0", default-features = false, features = ["tokio"] }
 slab = "0.4"
 hyper = { version = "0.14", features = ["full"] }
 lazy_static = "1.3"
-pprof = { version = "0.14", default-features = false, features = [
-  "flamegraph",
-  "protobuf-codec",
-] }
+pprof = { git = "https://github.com/VGalaxies/pprof-rs.git", rev = "ac27fbe7b96ef4ac16fc9811cdc0a27f5f352a8e", default-features = false, features = ["flamegraph", "protobuf-codec"] }
 regex = "1.3"
 futures = { version = "0.3", features = ["thread-pool", "compat"] }
 futures-executor = "0.3.1"
