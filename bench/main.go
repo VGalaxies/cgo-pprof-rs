@@ -9,6 +9,8 @@ extern int get_sigprof_handler(uint64_t* ptr);
 import "C"
 import (
 	"fmt"
+	"log"
+	"net/http"
 	"os"
 	"os/signal"
 	"runtime"
@@ -32,6 +34,26 @@ func stressGC() {
 }
 
 func main() {
+	StartCPUProfiler()
+	defer StopCPUProfiler()
+
+	// --- HTTP Server for Profiling ---
+	// Create a new ServeMux to handle HTTP requests.
+	serverMux := http.NewServeMux()
+	// Register the CPU profile handler at the specified endpoint.
+	// This endpoint will provide a pprof-formatted CPU profile.
+	serverMux.HandleFunc("/debug/pprof/profile", ProfileHTTPHandler)
+
+	// Start the HTTP server in a new goroutine so it doesn't block the main thread.
+	go func() {
+		// Listen on port 6060, a common port for pprof.
+		fmt.Println("✅ Starting pprof server on http://localhost:6060/debug/pprof/profile")
+		if err := http.ListenAndServe(":6060", serverMux); err != nil {
+			log.Fatalf("pprof server failed to start: %v", err)
+		}
+	}()
+	// --- End of HTTP Server Setup ---
+
 	// Lower the GC trigger threshold (percentage of live heap growth)
 	// Default is 100; 10 means GC will run when heap grows 10% beyond last GC
 	debug.SetGCPercent(10)
